@@ -1,0 +1,9 @@
+add_executable(app app.cpp)
+target_compile_features(app PRIVATE cxx_std_17)
+
+target_link_libraries(app PRIVATE tractor_library fmt::fmt)
+
+add_executable(poller_test Poller_test.cpp)
+target_compile_features(poller_test PRIVATE cxx_std_17)
+
+target_link_libraries(poller_test PRIVATE tractor_library)
