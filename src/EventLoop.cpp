@@ -1,16 +1,19 @@
 #include <tractor/Channel.h>
 #include <tractor/EventLoop.h>
-
+#include <tractor/Poller.h>
 #include <iostream>
 #include <assert.h>
 #include <poll.h>
 using namespace tractor;
 
 __thread EventLoop *t_loopInThisThread = 0;
+const int kPollTimeMs = 10000;
 
 EventLoop::EventLoop()
     : looping_(false),
-      threadId_(static_cast<pid_t>(::syscall(SYS_gettid)))
+      quit_(false),
+      threadId_(static_cast<pid_t>(::syscall(SYS_gettid))),
+      poller_(new Poller(this))
 {
     std::cout << "EventLoop created " << this << " in thread " << threadId_ << std::endl;
     if (t_loopInThisThread)

@@ -2,17 +2,17 @@
 #define EVENTLOOP_H
 
 #include "noncopyable.h"
-#include "Poller.h"
+// #include "Poller.h"
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <vector>
-// #include <boost/scoped_ptr.hpp>
-#include <memory>
+#include <boost/scoped_ptr.hpp>
 
 namespace tractor
 {
     class Channel;
+    class Poller;
 
     class EventLoop : public noncopyable
     {
@@ -38,8 +38,8 @@ namespace tractor
         bool quit_;
         const pid_t threadId_;
         // EventLoop 直接拥有 Poller
-        std::unique_ptr<Poller> poller_;
-
+        // std::unique_ptr<Poller> poller_;
+        boost::scoped_ptr<Poller> poller_;
         ChannelList activeChannels_;
     };
 

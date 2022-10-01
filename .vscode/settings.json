@@ -1,3 +1,14 @@
 {
-    "C_Cpp.errorSquiggles": "Disabled"
+    "C_Cpp.errorSquiggles": "Disabled",
+    "files.associations": {
+        "string": "cpp",
+        "random": "cpp",
+        "atomic": "cpp",
+        "cstdint": "cpp",
+        "*.tcc": "cpp",
+        "memory_resource": "cpp",
+        "memory": "cpp",
+        "type_traits": "cpp",
+        "iostream": "cpp"
+    }
 }

@@ -7,13 +7,17 @@ set(HEADER_LIST "${Tractor_SOURCE_DIR}/include/tractor/lib.hpp"
                 "${Tractor_SOURCE_DIR}/include/tractor/noncopyable.h"
                 "${Tractor_SOURCE_DIR}/include/tractor/Channel.h"
                 "${Tractor_SOURCE_DIR}/include/tractor/EventLoop.h"
-                "${Tractor_SOURCE_DIR}/include/tractor/Poller.h")
+                "${Tractor_SOURCE_DIR}/include/tractor/Poller.h"
+                "${Tractor_SOURCE_DIR}/include/tractor/Socket.h"
+                "${Tractor_SOURCE_DIR}/include/tractor/SockAddr.h")
 
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(tractor_library lib.cpp 
                             Channel.cpp
                             EventLoop.cpp
                             Poller.cpp
+                            Socket.cpp
+                            SockAddr.cpp
                             ${HEADER_LIST})
 
 # We need this directory, and users of our library will need it too

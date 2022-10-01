@@ -2,7 +2,7 @@
 #define POLLER_H
 
 #include "noncopyable.h"
-// #include "EventLoop.h"
+#include "EventLoop.h"
 #include <vector>
 #include <map>
 struct pollfd;
@@ -15,8 +15,8 @@ namespace tractor
     public:
         typedef std::vector<Channel *> ChannelList;
 
-        // Poller(EventLoop *loop);
-        Poller();
+        Poller(EventLoop *loop);
+        // Poller();
 
         ~Poller();
 
@@ -24,7 +24,7 @@ namespace tractor
 
         void updateChannel(Channel *channel);
         // TODO 判断是否在对应线程
-        // void assertInLoopThread() { ownerLoop_->assertInLoopThread(); }
+        void assertInLoopThread() { ownerLoop_->assertInLoopThread(); }
 
     private:
         void fillActiveChannels(int numEvents,
@@ -33,7 +33,7 @@ namespace tractor
         typedef std::vector<struct pollfd> PollFdList;
         typedef std::map<int, Channel *> ChannelMap;
 
-        // EventLoop *ownerLoop_;
+        EventLoop *ownerLoop_;
         PollFdList pollfds_;
         ChannelMap channels_;
     };

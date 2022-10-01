@@ -6,9 +6,9 @@
 
 using namespace tractor;
 
-// Poller::Poller(EventLoop *loop)
-//     : ownerLoop_(loop) {}
-Poller::Poller() {}
+Poller::Poller(EventLoop *loop)
+    : ownerLoop_(loop) {}
+// Poller::Poller() {}
 Poller::~Poller() {}
 
 void Poller::poll(int timeoutMs, ChannelList *activeChannels)
