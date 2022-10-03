@@ -1,8 +1,9 @@
 #include <tractor/Socket.h>
 #include <iostream>
 using namespace tractor;
-
-Socket::Socket() : socketFd_(socket(PF_INET, SOCK_STREAM, 0)) {}
+using namespace std;
+// Socket::Socket() : socketFd_(socket(PF_INET, SOCK_STREAM, 0)) {}
+Socket::Socket() : socketFd_(::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP)) {}
 
 Socket::~Socket()
 {

@@ -20,7 +20,7 @@ void Channel::update()
 }
 void Channel::handleEvent()
 {
-    if (revents_ & POLLNVAL)
+    if (revents_ & POLLNVAL) // Invalid request: fd not open
     {
         std::cout << "Channel::handle_event() POLLNVAL" << std::endl;
     }

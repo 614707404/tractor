@@ -8,18 +8,20 @@ namespace tractor
     {
     public:
         Socket();
+        // Socket(int socketFd) : socketFd_(socketFd) {}
         ~Socket();
-        void Bind(tractor::SockAddr &ServerAddr);
+        void Bind(SockAddr &ServerAddr);
         void Listen();
-        int Accept(tractor::SockAddr &ClientAddr);
-
+        int Accept(SockAddr &ClientAddr);
         int getFd();
+
         // void setTcpNoDelay(bool enable);
         // int shutdownWrite();
 
     private:
         int socketFd_;
     };
+
 } // namespace tractor
 
 #endif

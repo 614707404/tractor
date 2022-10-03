@@ -28,9 +28,10 @@ namespace tractor
     public:
         SockAddr();
         SockAddr(const char *ip, unsigned short port);
-
+        SockAddr(unsigned short port);
         ~SockAddr();
 
+        sa_family_t family() const { return addr_.sin_family; }
         struct sockaddr_in getAddr() const;
         struct sockaddr_in *getAddrPtr();
 

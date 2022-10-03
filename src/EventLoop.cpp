@@ -40,7 +40,7 @@ void EventLoop::loop()
     while (!quit_)
     {
         activeChannels_.clear();
-        poller_->poll(0, &activeChannels_);
+        poller_->poll(kPollTimeMs, &activeChannels_);
         for (auto it = activeChannels_.begin(); it != activeChannels_.end(); ++it)
         {
             (*it)->handleEvent();
