@@ -1,9 +1,12 @@
 #include <tractor/Channel.h>
 #include <tractor/EventLoop.h>
 #include <tractor/Poller.h>
+#include <tractor/Timer.h>
+#include <tractor/TimerQueue.h>
 #include <iostream>
 #include <assert.h>
 #include <poll.h>
+#include <sys/time.h>
 using namespace tractor;
 
 __thread EventLoop *t_loopInThisThread = 0;
@@ -13,7 +16,11 @@ EventLoop::EventLoop()
     : looping_(false),
       quit_(false),
       threadId_(static_cast<pid_t>(::syscall(SYS_gettid))),
-      poller_(new Poller(this))
+      callingPendingFunctors_(false),
+      poller_(new Poller(this)),
+      //   timerQueue_(new TimerQueue(this)),
+      //   wakeupFd_(createEventfd()),
+      wakeupChannel_(new Channel(this, wakeupFd_))
 {
     std::cout << "EventLoop created " << this << " in thread " << threadId_ << std::endl;
     if (t_loopInThisThread)
@@ -45,8 +52,8 @@ void EventLoop::loop()
         {
             (*it)->handleEvent();
         }
+        doPendingFunctors();
     }
-
     std::cout << "EventLoop " << this << " stop looping " << std::endl;
     looping_ = false;
 }
@@ -67,4 +74,76 @@ void EventLoop::abortNotInLoopThread_()
 void EventLoop::quit()
 {
     quit_ = true;
+}
+void EventLoop::runInLoop(const Functor &cb)
+{
+    if (isInLoopThread())
+    {
+        cb();
+    }
+    else
+    {
+        queueInLoop(cb);
+    }
+}
+void EventLoop::queueInLoop(const Functor &cb)
+{
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        pendingFunctors_.push_back(cb);
+    }
+
+    if (!isInLoopThread() || callingPendingFunctors_)
+    {
+        wakeup();
+    }
+}
+void EventLoop::doPendingFunctors()
+{
+    std::vector<Functor> functors;
+    callingPendingFunctors_ = true;
+
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        functors.swap(pendingFunctors_);
+    }
+
+    for (size_t i = 0; i < functors.size(); ++i)
+    {
+        functors[i]();
+    }
+    callingPendingFunctors_ = false;
+}
+void EventLoop::runAt(const int64_t &time, const Functor &cb)
+{
+    timerQueue_->addTimer(cb, time, 0.0);
+}
+
+void EventLoop::runAfter(double delay, const Functor &cb)
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    int64_t seconds = tv.tv_sec;
+    int64_t currTime = seconds * 1e6 + tv.tv_usec;
+    int64_t time = currTime + static_cast<int64_t>(delay * 1e6);
+    runAt(time, cb);
+}
+
+void EventLoop::runEvery(double interval, const Functor &cb)
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    int64_t seconds = tv.tv_sec;
+    int64_t currTime = seconds * 1e6 + tv.tv_usec;
+    int64_t time = currTime + static_cast<int64_t>(interval * 1e6);
+    timerQueue_->addTimer(cb, time, interval);
+}
+void EventLoop::wakeup()
+{
+    uint64_t one = 1;
+    ssize_t n = ::write(wakeupFd_, &one, sizeof one);
+    if (n != sizeof one)
+    {
+        std::cout << "EventLoop::wakeup() writes " << n << " bytes instead of 8" << std::endl;
+    }
 }

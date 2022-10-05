@@ -8,7 +8,7 @@ namespace tractor
     {
     public:
         Socket();
-        // Socket(int socketFd) : socketFd_(socketFd) {}
+        Socket(int socketFd) : socketFd_(socketFd) {}
         ~Socket();
         void Bind(SockAddr &ServerAddr);
         void Listen();

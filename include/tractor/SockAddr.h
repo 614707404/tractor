@@ -29,6 +29,7 @@ namespace tractor
         SockAddr();
         SockAddr(const char *ip, unsigned short port);
         SockAddr(unsigned short port);
+        SockAddr(sockaddr_in &addr) : addr_(addr) {}
         ~SockAddr();
 
         sa_family_t family() const { return addr_.sin_family; }

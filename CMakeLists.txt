@@ -49,11 +49,11 @@ find_package(Boost REQUIRED)
 # Adds Boost::boost
 
 # Formatting library
-FetchContent_Declare(
-  fmtlib
-  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG 5.3.0)
-FetchContent_MakeAvailable(fmtlib)
+# FetchContent_Declare(
+#   fmtlib
+#   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+#   GIT_TAG 5.3.0)
+# FetchContent_MakeAvailable(fmtlib)
 # Adds fmt::fmt
 
 # The compiled library code is here

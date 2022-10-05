@@ -1,4 +1,4 @@
-## My test project “Tractor”
+## My personal practice project :  tractor
 To configure:
 
 ```bash
@@ -10,5 +10,4 @@ To build:
 
 ```bash
 cmake --build build
-cmake --build build -DCMAKE_BUILD_TYPE=Debug
 ```

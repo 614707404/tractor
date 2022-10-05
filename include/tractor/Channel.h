@@ -3,8 +3,8 @@
 // Channel 类简单封装文件描述符，方便 fd 的 IO 事件分发
 
 #include <functional>
-#include "noncopyable.h"
-#include "EventLoop.h"
+#include <tractor/noncopyable.h>
+#include <tractor/EventLoop.h>
 namespace tractor
 {
 
