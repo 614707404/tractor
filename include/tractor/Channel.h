@@ -14,6 +14,7 @@ namespace tractor
         typedef std::function<void()> EventCallback;
 
         Channel(EventLoop *loop, int fd);
+        ~Channel();
         void handleEvent();
         void setReadCallback(const EventCallback &cb)
         {
@@ -45,6 +46,8 @@ namespace tractor
 
     private:
         void update();
+
+        bool eventHandleing_;
 
         static const int kNoneEvent;
         static const int kReadEvent;

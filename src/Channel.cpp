@@ -1,6 +1,8 @@
 #include <tractor/Channel.h>
+
 #include <poll.h>
 #include <iostream>
+#include <assert.h>
 using namespace tractor;
 
 const int Channel::kNoneEvent = 0;
@@ -13,7 +15,10 @@ Channel::Channel(EventLoop *loop, int fdArg)
       events_(0),
       revents_(0),
       index_(-1) {}
-
+Channel::~Channel()
+{
+    assert(!eventHandleing_);
+}
 void Channel::update()
 {
     loop_->updateChannel(this);
