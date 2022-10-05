@@ -3,6 +3,7 @@
 #include <tractor/Socket.h>
 #include <tractor/EventLoop.h>
 
+#include <string.h>
 #include <iostream>
 using namespace tractor;
 using namespace std;
@@ -22,6 +23,12 @@ TcpConnection::TcpConnection(EventLoop *loop,
 {
     channel_->setReadCallback(
         std::bind(&TcpConnection::handleRead_, this));
+    channel_->setWriteCallback(
+        std::bind(&TcpConnection::handleWrite_, this));
+    channel_->setCloseCallback(
+        std::bind(&TcpConnection::handleClose_, this));
+    channel_->setErrorCallback(
+        std::bind(&TcpConnection::handleError_, this));
 }
 TcpConnection::~TcpConnection()
 {
@@ -42,6 +49,53 @@ void TcpConnection::handleRead_()
 {
     char buf[65536];
     ssize_t n = ::read(channel_->fd(), buf, sizeof buf);
-    messageCallback_(shared_from_this(), buf, n);
+    if (n > 0)
+    {
+        messageCallback_(shared_from_this(), buf, n);
+    }
+    else if (n == 0)
+    {
+        handleClose_();
+    }
+    else
+    {
+        handleError_();
+    }
     // FIXME: close connection if n == 0
 }
+void TcpConnection::handleClose_()
+{
+    loop_->assertInLoopThread();
+    cout << "TcpConnection::handleClose state = " << state_ << endl;
+    assert(state_ == kConnected);
+    // we don't close fd, leave it to dtor, so we can find leaks easily.
+    channel_->disableAll();
+    // must be the last line
+    closeCallback_(shared_from_this());
+}
+
+void TcpConnection::handleError_()
+{
+    int err;
+
+    socklen_t errlen = sizeof err;
+
+    if (::getsockopt(channel_->fd(), SOL_SOCKET, SO_ERROR, &err, &errlen) < 0)
+    {
+        err = errno;
+    }
+    char t_errnobuf[512];
+    cout << "TcpConnection::handleError [" << name_
+         << "] - SO_ERROR = " << err << " " << strerror_r(err, t_errnobuf, sizeof t_errnobuf) << endl;
+}
+void TcpConnection::connectDestroyed()
+{
+    loop_->assertInLoopThread();
+    assert(state_ == kConnected);
+    setState_(kDisconnected);
+    channel_->disableAll();
+    connectionCallback_(shared_from_this());
+
+    loop_->removeChannel(get_pointer(channel_));
+}
+void TcpConnection::handleWrite_() {}

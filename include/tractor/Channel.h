@@ -28,6 +28,10 @@ namespace tractor
         {
             errorCallback_ = cb;
         }
+        void setCloseCallback(const EventCallback &cb)
+        {
+            closeCallback_ = cb;
+        }
 
         int fd() const { return fd_; }
         int events() const { return events_; }
@@ -37,6 +41,11 @@ namespace tractor
         void enableReading()
         {
             events_ |= kReadEvent;
+            update();
+        }
+        void disableAll()
+        {
+            events_ = kNoneEvent;
             update();
         }
         int index() { return index_; }
@@ -62,6 +71,7 @@ namespace tractor
         EventCallback readCallback_;
         EventCallback writeCallback_;
         EventCallback errorCallback_;
+        EventCallback closeCallback_;
     };
 
 }

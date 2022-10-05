@@ -21,6 +21,7 @@ namespace tractor
     public:
         typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
         typedef std::function<void(const TcpConnectionPtr &)> ConnectionCallback;
+        typedef std::function<void(const TcpConnectionPtr &)> CloseCallback;
         typedef std::function<void(const TcpConnectionPtr &, const char *data, ssize_t len)> MessageCallback;
 
         TcpConnection();
@@ -39,19 +40,24 @@ namespace tractor
         bool connected() const { return state_ == kConnected; }
 
         void connectEstablished();
-
+        void connectDestroyed();
         void setConnectionCallback(ConnectionCallback cb) { connectionCallback_ = cb; }
         void setMessageCallback(MessageCallback cb) { messageCallback_ = cb; }
+        void setCloseCallback(CloseCallback cb) { closeCallback_ = cb; }
 
     private:
         enum ConnectState_
         {
             kConnecting,
             kConnected,
+            kDisconnected
         };
 
         void setState_(ConnectState_ s) { state_ = s; };
         void handleRead_();
+        void handleWrite_();
+        void handleClose_();
+        void handleError_();
 
         EventLoop *loop_;
         std::string name_;
@@ -65,6 +71,9 @@ namespace tractor
 
         ConnectionCallback connectionCallback_;
         MessageCallback messageCallback_;
+        CloseCallback closeCallback_;
+
+        Buffer inputBuffer_;
     };
 }
 #endif

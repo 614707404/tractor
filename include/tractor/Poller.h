@@ -6,7 +6,14 @@
 #include <vector>
 #include <map>
 struct pollfd;
+/*
+    POLLIN There is data to read.
+    POLLPRI  There is some exceptional condition on the file descriptor.
+    POLLOUT Writing is now possible
+    POLLHUP Stream socket peer closed connection
+    POLLNVAL Invalid request
 
+*/
 namespace tractor
 {
     class Channel;
@@ -23,6 +30,7 @@ namespace tractor
         void poll(int timeoutMs, ChannelList *activeChannels);
 
         void updateChannel(Channel *channel);
+        void removeChannel(Channel *channel);
         // TODO 判断是否在对应线程
         void assertInLoopThread() { ownerLoop_->assertInLoopThread(); }
 

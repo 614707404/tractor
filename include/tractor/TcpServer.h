@@ -25,17 +25,21 @@ namespace tractor
         void start();
         void setConnectionCallback(const TcpConnection::ConnectionCallback &cb) { connectionCallback_ = cb; }
         void setMessageCallback(const TcpConnection::MessageCallback &cb) { messageCallback_ = cb; }
+        void setCloseCallback(const TcpConnection::CloseCallback &cb) { closeCallback_ = cb; }
 
     private:
         typedef std::map<std::string, std::shared_ptr<TcpConnection>> ConnectionMap;
+        typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
 
         void newConnection(int sockfd, const SockAddr &peerAddr);
-
+        void removeConnection(const TcpConnectionPtr &conn);
         EventLoop *loop_; // the acceptor loop
         const std::string name_;
         boost::scoped_ptr<Acceptor> acceptor_; // avoid revealing Acceptor
         TcpConnection::ConnectionCallback connectionCallback_;
         TcpConnection::MessageCallback messageCallback_;
+        TcpConnection::CloseCallback closeCallback_;
+
         bool started_;
         int nextConnId_; // always in loop thread
         ConnectionMap connections_;

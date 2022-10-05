@@ -32,6 +32,7 @@ namespace tractor
 
         void queueInLoop(const Functor &cb);
         void updateChannel(Channel *channel);
+        void removeChannel(Channel *channel);
         bool isInLoopThread() const { return threadId_ == static_cast<pid_t>(::syscall(SYS_gettid)); }
         void assertInLoopThread()
         {

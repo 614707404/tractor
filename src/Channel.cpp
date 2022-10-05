@@ -25,11 +25,17 @@ void Channel::update()
 }
 void Channel::handleEvent()
 {
+    eventHandleing_ = true;
     if (revents_ & POLLNVAL) // Invalid request: fd not open
     {
         std::cout << "Channel::handle_event() POLLNVAL" << std::endl;
     }
-
+    if ((revents_ & POLLHUP) && !(revents_ & POLLIN))
+    {
+        std::cout << "Channel::handle_event() POLLHUP" << std::endl;
+        if (closeCallback_)
+            closeCallback_();
+    }
     if (revents_ & (POLLERR | POLLNVAL))
     {
         if (errorCallback_)
@@ -45,4 +51,5 @@ void Channel::handleEvent()
         if (writeCallback_)
             writeCallback_();
     }
+    eventHandleing_ = false;
 }
