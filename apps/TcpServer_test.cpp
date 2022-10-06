@@ -18,11 +18,15 @@ void onConnection(const tractor::TcpConnection::TcpConnectionPtr &conn)
 }
 
 void onMessage(const tractor::TcpConnection::TcpConnectionPtr &conn,
-               const char *data,
-               ssize_t len)
+               tractor::Buffer *buf,
+               int64_t receiveTime)
 {
-    printf("onMessage(): received %zd bytes from connection [%s]\n",
-           len, conn->name().c_str());
+    printf("onMessage(): received %zd bytes from connection [%s] at %s\n",
+           buf->readableBytes(),
+           conn->name().c_str(),
+           std::to_string(receiveTime).c_str());
+
+    printf("onMessage(): [%s]\n", buf->retrieveAsString().c_str());
 }
 int main()
 {
