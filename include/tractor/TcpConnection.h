@@ -25,6 +25,8 @@ namespace tractor
         typedef std::function<void(const TcpConnectionPtr &)> CloseCallback;
         // typedef std::function<void(const TcpConnectionPtr &, const char *data, ssize_t len)> MessageCallback;
         typedef std::function<void(const TcpConnectionPtr &, Buffer *data, int64_t)> MessageCallback;
+        typedef std::function<void(const TcpConnectionPtr &)> WriteCompleteCallback;
+        typedef std::function<void(const TcpConnectionPtr &, size_t)> HighWaterMarkCallback;
 
         TcpConnection();
         TcpConnection(EventLoop *loop,
@@ -43,12 +45,21 @@ namespace tractor
 
         void connectEstablished();
         void connectDestroyed();
+
         void setConnectionCallback(ConnectionCallback cb) { connectionCallback_ = cb; }
         void setMessageCallback(MessageCallback cb) { messageCallback_ = cb; }
         void setCloseCallback(CloseCallback cb) { closeCallback_ = cb; }
+        void setWriteCompleteCallback(const WriteCompleteCallback &cb) { writeCompleteCallback_ = cb; }
+        void setHighWaterMarkCallback(const HighWaterMarkCallback &cb, size_t highWaterMark)
+        {
+            highWaterMarkCallback_ = cb;
+            highWaterMark_ = highWaterMark;
+        }
 
         void send(const std::string &message);
         void shutdown();
+
+        void setTcpNoDelay(bool on);
 
     private:
         enum ConnectState_
@@ -80,10 +91,15 @@ namespace tractor
 
         ConnectionCallback connectionCallback_;
         MessageCallback messageCallback_;
+        WriteCompleteCallback writeCompleteCallback_;
+        HighWaterMarkCallback highWaterMarkCallback_;
+
         CloseCallback closeCallback_;
 
         Buffer inputBuffer_;
         Buffer outputBuffer_;
+
+        size_t highWaterMark_;
     };
 }
 #endif

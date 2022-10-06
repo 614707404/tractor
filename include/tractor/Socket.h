@@ -15,7 +15,7 @@ namespace tractor
         int Accept(SockAddr &ClientAddr);
         int getFd();
 
-        // void setTcpNoDelay(bool enable);
+        void setTcpNoDelay(bool enable);
         void shutdownWrite();
 
     private:

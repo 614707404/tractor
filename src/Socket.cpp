@@ -1,4 +1,6 @@
 #include <tractor/Socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <iostream>
 using namespace tractor;
 using namespace std;
@@ -47,4 +49,10 @@ void Socket::shutdownWrite()
     {
         std::cout << "sockets::shutdownWrite" << std::endl;
     }
+}
+void Socket::setTcpNoDelay(bool enable)
+{
+    int optval = enable ? 1 : 0;
+    ::setsockopt(socketFd_, IPPROTO_TCP, TCP_NODELAY,
+                 &optval, sizeof optval);
 }

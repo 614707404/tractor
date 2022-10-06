@@ -26,6 +26,7 @@ namespace tractor
         void setConnectionCallback(const TcpConnection::ConnectionCallback &cb) { connectionCallback_ = cb; }
         void setMessageCallback(const TcpConnection::MessageCallback &cb) { messageCallback_ = cb; }
         void setCloseCallback(const TcpConnection::CloseCallback &cb) { closeCallback_ = cb; }
+        void setWriteCompleteCallback(const TcpConnection::WriteCompleteCallback &cb) { writeCompleteCallback_ = cb; }
 
     private:
         typedef std::map<std::string, std::shared_ptr<TcpConnection>> ConnectionMap;
@@ -38,6 +39,8 @@ namespace tractor
         boost::scoped_ptr<Acceptor> acceptor_; // avoid revealing Acceptor
         TcpConnection::ConnectionCallback connectionCallback_;
         TcpConnection::MessageCallback messageCallback_;
+        TcpConnection::WriteCompleteCallback writeCompleteCallback_;
+
         TcpConnection::CloseCallback closeCallback_;
 
         bool started_;
