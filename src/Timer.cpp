@@ -14,6 +14,7 @@ void Timer::restart(int64_t now)
     expiration_ = 0;
   }
 }
+// TODO to_string(now()) 存在溢出问题
 int64_t Timer::now()
 {
   struct timeval tv;

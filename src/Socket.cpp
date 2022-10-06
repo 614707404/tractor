@@ -41,3 +41,10 @@ int Socket::getFd()
 {
     return socketFd_;
 }
+void Socket::shutdownWrite()
+{
+    if (::shutdown(socketFd_, SHUT_WR) < 0)
+    {
+        std::cout << "sockets::shutdownWrite" << std::endl;
+    }
+}

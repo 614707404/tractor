@@ -6,6 +6,7 @@
 #include <iostream>
 #include <assert.h>
 #include <poll.h>
+#include <signal.h>
 #include <sys/time.h>
 using namespace tractor;
 
@@ -154,3 +155,12 @@ void EventLoop::wakeup()
         std::cout << "EventLoop::wakeup() writes " << n << " bytes instead of 8" << std::endl;
     }
 }
+class IgnoreSigPipe
+{
+public:
+    IgnoreSigPipe()
+    {
+        ::signal(SIGPIPE, SIG_IGN);
+    }
+};
+IgnoreSigPipe ignoreSigPipe;

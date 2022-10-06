@@ -16,7 +16,7 @@ namespace tractor
         int getFd();
 
         // void setTcpNoDelay(bool enable);
-        // int shutdownWrite();
+        void shutdownWrite();
 
     private:
         int socketFd_;

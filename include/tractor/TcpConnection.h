@@ -47,12 +47,16 @@ namespace tractor
         void setMessageCallback(MessageCallback cb) { messageCallback_ = cb; }
         void setCloseCallback(CloseCallback cb) { closeCallback_ = cb; }
 
+        void send(const std::string &message);
+        void shutdown();
+
     private:
         enum ConnectState_
         {
             kConnecting,
             kConnected,
-            kDisconnected
+            kDisconnected,
+            kDisconnecting
         };
 
         void setState_(ConnectState_ s) { state_ = s; };
@@ -60,6 +64,9 @@ namespace tractor
         void handleWrite_();
         void handleClose_();
         void handleError_();
+
+        void sendInLoop(const std::string &message);
+        void shutdownInLoop();
 
         EventLoop *loop_;
         std::string name_;
@@ -76,6 +83,7 @@ namespace tractor
         CloseCallback closeCallback_;
 
         Buffer inputBuffer_;
+        Buffer outputBuffer_;
     };
 }
 #endif
