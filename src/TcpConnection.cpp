@@ -22,7 +22,7 @@ TcpConnection::TcpConnection(EventLoop *loop,
       socket_(new Socket(sockfd))
 {
     channel_->setReadCallback(
-        std::bind(&TcpConnection::handleRead_, this));
+        std::bind(&TcpConnection::handleRead_, this, std::placeholders::_1));
     channel_->setWriteCallback(
         std::bind(&TcpConnection::handleWrite_, this));
     channel_->setCloseCallback(
@@ -45,13 +45,14 @@ void TcpConnection::connectEstablished()
     connectionCallback_(shared_from_this());
 }
 
-void TcpConnection::handleRead_()
+void TcpConnection::handleRead_(int64_t receiveTime)
 {
-    char buf[65536];
-    ssize_t n = ::read(channel_->fd(), buf, sizeof buf);
+    int savedErrno = 0;
+    ssize_t n = inputBuffer_.readFd(channel_->fd(), &savedErrno);
+
     if (n > 0)
     {
-        messageCallback_(shared_from_this(), buf, n);
+        messageCallback_(shared_from_this(), &inputBuffer_, receiveTime);
     }
     else if (n == 0)
     {
@@ -59,6 +60,8 @@ void TcpConnection::handleRead_()
     }
     else
     {
+        errno = savedErrno;
+        std::cout << "TcpConnection::handleRead" << std::endl;
         handleError_();
     }
     // FIXME: close connection if n == 0

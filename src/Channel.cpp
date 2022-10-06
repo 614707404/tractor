@@ -23,7 +23,7 @@ void Channel::update()
 {
     loop_->updateChannel(this);
 }
-void Channel::handleEvent()
+void Channel::handleEvent(int64_t receiveTime)
 {
     eventHandleing_ = true;
     if (revents_ & POLLNVAL) // Invalid request: fd not open
@@ -44,7 +44,7 @@ void Channel::handleEvent()
     if (revents_ & (POLLIN | POLLPRI | POLLRDHUP))
     {
         if (readCallback_)
-            readCallback_();
+            readCallback_(receiveTime);
     }
     if (revents_ & POLLOUT)
     {

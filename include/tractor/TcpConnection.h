@@ -3,6 +3,7 @@
 
 #include <tractor/noncopyable.h>
 #include <tractor/SockAddr.h>
+#include <tractor/Buffer.h>
 
 #include <boost/scoped_ptr.hpp>
 #include <string>
@@ -22,7 +23,8 @@ namespace tractor
         typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
         typedef std::function<void(const TcpConnectionPtr &)> ConnectionCallback;
         typedef std::function<void(const TcpConnectionPtr &)> CloseCallback;
-        typedef std::function<void(const TcpConnectionPtr &, const char *data, ssize_t len)> MessageCallback;
+        // typedef std::function<void(const TcpConnectionPtr &, const char *data, ssize_t len)> MessageCallback;
+        typedef std::function<void(const TcpConnectionPtr &, Buffer *data, int64_t)> MessageCallback;
 
         TcpConnection();
         TcpConnection(EventLoop *loop,
@@ -54,7 +56,7 @@ namespace tractor
         };
 
         void setState_(ConnectState_ s) { state_ = s; };
-        void handleRead_();
+        void handleRead_(int64_t);
         void handleWrite_();
         void handleClose_();
         void handleError_();

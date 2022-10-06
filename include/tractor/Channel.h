@@ -12,11 +12,11 @@ namespace tractor
     {
     public:
         typedef std::function<void()> EventCallback;
-
+        typedef std::function<void(int64_t)> ReadEventCallback;
         Channel(EventLoop *loop, int fd);
         ~Channel();
-        void handleEvent();
-        void setReadCallback(const EventCallback &cb)
+        void handleEvent(int64_t receiveTime);
+        void setReadCallback(const ReadEventCallback &cb)
         {
             readCallback_ = cb;
         }
@@ -68,7 +68,7 @@ namespace tractor
         int revents_; // 目前活动的事件，由EventLoop/Poller设置
         int index_;   // used by Poller.
 
-        EventCallback readCallback_;
+        ReadEventCallback readCallback_;
         EventCallback writeCallback_;
         EventCallback errorCallback_;
         EventCallback closeCallback_;

@@ -1,5 +1,7 @@
 #include <tractor/Poller.h>
 #include <tractor/Channel.h>
+#include <tractor/Timer.h>
+
 #include <iostream>
 #include <poll.h>
 #include <assert.h>
@@ -11,11 +13,11 @@ Poller::Poller(EventLoop *loop)
 // Poller::Poller() {}
 Poller::~Poller() {}
 
-void Poller::poll(int timeoutMs, ChannelList *activeChannels)
+int64_t Poller::poll(int timeoutMs, ChannelList *activeChannels)
 {
     // XXX pollfds_ shouldn't change
     int numEvents = ::poll(pollfds_.data(), pollfds_.size(), timeoutMs);
-
+    int now = Timer::now();
     if (numEvents > 0)
     {
         std::cout << numEvents << " events happended" << std::endl;
@@ -29,6 +31,7 @@ void Poller::poll(int timeoutMs, ChannelList *activeChannels)
     {
         std::cout << "ERROR : Poller::poll()" << std::endl;
     }
+    return now;
 }
 void Poller::fillActiveChannels(int numEvents,
                                 ChannelList *activeChannels) const
