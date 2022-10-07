@@ -68,3 +68,6 @@ if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
    AND BUILD_TESTING)
   add_subdirectory(tests)
 endif()
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+

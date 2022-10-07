@@ -18,6 +18,9 @@ set(HEADER_LIST "${Tractor_SOURCE_DIR}/include/tractor/noncopyable.h"
                 "${Tractor_SOURCE_DIR}/include/tractor/TcpServer.h"
 
                 "${Tractor_SOURCE_DIR}/include/tractor/Buffer.h"
+
+                "${Tractor_SOURCE_DIR}/include/tractor/ThreadPool.h"
+
                 )
 
 # Make an automatic library - will be static or dynamic based on user setting
@@ -34,6 +37,8 @@ add_library(tractor_library Channel.cpp
                             TcpServer.cpp
 
                             Buffer.cpp
+
+                            ThreadPool.cpp
                             ${HEADER_LIST})
 
 # We need this directory, and users of our library will need it too

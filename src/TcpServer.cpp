@@ -10,7 +10,8 @@ TcpServer::TcpServer(EventLoop *loop, SockAddr &listenAddr)
       name_(listenAddr.toString()),
       acceptor_(new Acceptor(loop, listenAddr)),
       started_(false),
-      nextConnId_(1)
+      nextConnId_(1),
+      threadPool_(new ThreadPool(loop))
 {
     acceptor_->setNewConnectionCallback(
         std::bind(&TcpServer::newConnection, this, std::placeholders::_1, std::placeholders::_2));
@@ -50,24 +51,34 @@ void TcpServer::newConnection(int sockfd, const SockAddr &peerAddr)
         std::cout << "ERROR sockets::getLocalAddr" << std::endl;
     }
     SockAddr localAddr(localaddr);
+    EventLoop *ioLoop = threadPool_->getNextLoop();
     // FIXME poll with zero timeout to double confirm the new connection
-    std::shared_ptr<TcpConnection> conn = std::make_shared<TcpConnection>(loop_, connName, sockfd, localAddr, peerAddr);
+    std::shared_ptr<TcpConnection> conn = std::make_shared<TcpConnection>(ioLoop, connName, sockfd, localAddr, peerAddr);
     connections_[connName] = conn;
     conn->setConnectionCallback(connectionCallback_);
     conn->setMessageCallback(messageCallback_);
     conn->setWriteCompleteCallback(writeCompleteCallback_);
 
     conn->setCloseCallback(std::bind(&TcpServer::removeConnection, this, std::placeholders::_1));
-    conn->connectEstablished();
+    ioLoop->runInLoop(std::bind(&TcpConnection::connectEstablished, conn));
 }
 void TcpServer::removeConnection(const TcpConnectionPtr &conn)
 {
+    loop_->runInLoop(std::bind(&TcpServer::removeConnectionInLoop, this, conn));
+}
+void TcpServer::removeConnectionInLoop(const TcpConnectionPtr &conn)
+{
     loop_->assertInLoopThread();
-    std::cout << "TcpServer::removeConnection [" << name_
+    std::cout << "TcpServer::removeConnectionInLoop [" << name_
               << "] - connection " << conn->name() << std::endl;
     size_t n = connections_.erase(conn->name());
     assert(n == 1);
     (void)n;
-    loop_->queueInLoop(
+    EventLoop *ioLoop = conn->getLoop();
+    ioLoop->queueInLoop(
         std::bind(&TcpConnection::connectDestroyed, conn));
+}
+void TcpServer::setThreadNum(int numThreads)
+{
+    threadPool_->setThreadNum(numThreads);
 }

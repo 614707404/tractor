@@ -28,7 +28,7 @@ void onMessage(const tractor::TcpConnection::TcpConnectionPtr &conn,
 
     printf("onMessage(): [%s]\n", buf->retrieveAsString().c_str());
 }
-int main()
+int main(int argc, char *argv[])
 {
     printf("main(): pid = %d\n", getpid());
 
@@ -38,6 +38,10 @@ int main()
     tractor::TcpServer server(&loop, listenAddr);
     server.setConnectionCallback(onConnection);
     server.setMessageCallback(onMessage);
+    if (argc > 1)
+    {
+        server.setThreadNum(atoi(argv[1]));
+    }
     server.start();
 
     loop.loop();
