@@ -23,7 +23,9 @@ set(HEADER_LIST "${Tractor_SOURCE_DIR}/include/tractor/noncopyable.h"
 
                 "${Tractor_SOURCE_DIR}/include/tractor/BasePoller.h"
                 "${Tractor_SOURCE_DIR}/include/tractor/EPoller.h"
+                "${Tractor_SOURCE_DIR}/include/spdlog"
                 )
+
 
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(tractor_library Channel.cpp
@@ -49,7 +51,7 @@ add_library(tractor_library Channel.cpp
 target_include_directories(tractor_library PUBLIC ../include)
 
 # This depends on (header only) boost
-target_link_libraries(tractor_library PRIVATE Boost::boost)
+target_link_libraries(tractor_library PRIVATE Boost::boost Threads::Threads )
 
 # All users of this library will need at least C++11
 target_compile_features(tractor_library PUBLIC cxx_std_11)

@@ -45,8 +45,11 @@ endif()
 
 # Accumulator library
 # This is header only, so could be replaced with git submodules or FetchContent
+
 find_package(Boost REQUIRED)
-# Adds Boost::boost
+find_package(Threads REQUIRED)
+# find_package(spdlog REQUIRED)
+
 
 # Formatting library
 # FetchContent_Declare(
