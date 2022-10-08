@@ -14,7 +14,7 @@ Channel::Channel(EventLoop *loop, int fdArg)
       fd_(fdArg),
       events_(0),
       revents_(0),
-      index_(-1) {}
+      index_(-1) {} // index_初始化为 -1，
 Channel::~Channel()
 {
     assert(!eventHandleing_);

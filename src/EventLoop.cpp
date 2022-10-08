@@ -1,6 +1,7 @@
 #include <tractor/Channel.h>
 #include <tractor/EventLoop.h>
 #include <tractor/Poller.h>
+#include <tractor/EPoller.h>
 #include <tractor/Timer.h>
 #include <tractor/TimerQueue.h>
 #include <iostream>
@@ -18,7 +19,8 @@ EventLoop::EventLoop()
       quit_(false),
       threadId_(static_cast<pid_t>(::syscall(SYS_gettid))),
       callingPendingFunctors_(false),
-      poller_(new Poller(this)),
+      //   poller_(new Poller(this)),
+      poller_(new EPoller(this)),
       //   timerQueue_(new TimerQueue(this)),
       //   wakeupFd_(createEventfd()),
       wakeupChannel_(new Channel(this, wakeupFd_))

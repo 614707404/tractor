@@ -14,7 +14,7 @@
 namespace tractor
 {
     class Channel;
-    class Poller;
+    class EPoller;
     class TimerQueue;
     class EventLoop : public noncopyable
     {
@@ -60,7 +60,9 @@ namespace tractor
 
         // EventLoop 直接拥有 Poller
         // std::unique_ptr<Poller> poller_;
-        boost::scoped_ptr<Poller> poller_;
+        // boost::scoped_ptr<Poller> poller_;
+        boost::scoped_ptr<EPoller> poller_;
+
         boost::scoped_ptr<TimerQueue> timerQueue_;
         int wakeupFd_;
         boost::scoped_ptr<Channel> wakeupChannel_;

@@ -12,7 +12,6 @@ struct pollfd;
     POLLOUT Writing is now possible
     POLLHUP Stream socket peer closed connection
     POLLNVAL Invalid request
-
 */
 namespace tractor
 {
