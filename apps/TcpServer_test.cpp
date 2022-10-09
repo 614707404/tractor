@@ -32,9 +32,8 @@ void onMessage(const tractor::TcpConnection::TcpConnectionPtr &conn,
 }
 int main(int argc, char *argv[])
 {
-    spdlog::info("Welcome to spdlog!");
-    spdlog::error("Some error message with arg: {}", 1);
-    printf("main(): pid = %d\n", getpid());
+
+    spdlog::info("main(): pid = {}", getpid());
 
     tractor::SockAddr listenAddr(9981);
     tractor::EventLoop loop;

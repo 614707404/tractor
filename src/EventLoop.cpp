@@ -4,15 +4,30 @@
 #include <tractor/EPoller.h>
 #include <tractor/Timer.h>
 #include <tractor/TimerQueue.h>
+
 #include <iostream>
+#include <spdlog/spdlog.h>
+
 #include <assert.h>
 #include <poll.h>
 #include <signal.h>
 #include <sys/time.h>
 using namespace tractor;
 
-__thread EventLoop *t_loopInThisThread = 0;
-const int kPollTimeMs = 10000;
+namespace
+{
+    class IgnoreSigPipe
+    {
+    public:
+        IgnoreSigPipe()
+        {
+            ::signal(SIGPIPE, SIG_IGN);
+        }
+    };
+    IgnoreSigPipe ignoreSigPipe;
+    __thread EventLoop *t_loopInThisThread = 0;
+    const int kPollTimeMs = 10000;
+}
 
 EventLoop::EventLoop()
     : looping_(false),
@@ -25,11 +40,11 @@ EventLoop::EventLoop()
       //   wakeupFd_(createEventfd()),
       wakeupChannel_(new Channel(this, wakeupFd_))
 {
-    std::cout << "EventLoop created " << this << " in thread " << threadId_ << std::endl;
+    // spdlog::debug("EventLoop created {0} in thread {1}", this, threadId_);
+
     if (t_loopInThisThread)
     {
-        std::cout << "Another EventLoop " << t_loopInThisThread
-                  << " exists in this thread " << threadId_ << std::endl;
+        // spdlog::error("Another EventLoop {0} exists in this thread {1}", t_loopInThisThread, threadId_);
     }
     else
     {
@@ -38,6 +53,8 @@ EventLoop::EventLoop()
 }
 EventLoop::~EventLoop()
 {
+    // spdlog::debug("EventLoop {0} of thread {1} destructs in thread", this, threadId_, static_cast<pid_t>(::syscall(SYS_gettid)));
+
     assert(!looping_);
     t_loopInThisThread = NULL;
 }
@@ -57,7 +74,8 @@ void EventLoop::loop()
         }
         doPendingFunctors();
     }
-    std::cout << "EventLoop " << this << " stop looping " << std::endl;
+    // spdlog::trace("EventLoop {} stop looping", this);
+
     looping_ = false;
 }
 
@@ -157,12 +175,3 @@ void EventLoop::wakeup()
         std::cout << "EventLoop::wakeup() writes " << n << " bytes instead of 8" << std::endl;
     }
 }
-class IgnoreSigPipe
-{
-public:
-    IgnoreSigPipe()
-    {
-        ::signal(SIGPIPE, SIG_IGN);
-    }
-};
-IgnoreSigPipe ignoreSigPipe;
