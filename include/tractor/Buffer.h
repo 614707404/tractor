@@ -150,7 +150,6 @@ namespace tractor
             }
             else
             {
-                // move readable data to the front, make space inside buffer
                 assert(kCheapPrepend < readerIndex_);
                 size_t readable = readableBytes();
                 std::copy(begin() + readerIndex_,
