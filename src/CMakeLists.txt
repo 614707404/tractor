@@ -23,7 +23,14 @@ set(HEADER_LIST "${Tractor_SOURCE_DIR}/include/tractor/noncopyable.h"
 
                 "${Tractor_SOURCE_DIR}/include/tractor/BasePoller.h"
                 "${Tractor_SOURCE_DIR}/include/tractor/EPoller.h"
+
                 "${Tractor_SOURCE_DIR}/include/spdlog"
+
+                "${Tractor_SOURCE_DIR}/include/tractor/HttpParser.h"
+                "${Tractor_SOURCE_DIR}/include/tractor/HttpRequest.h"
+                "${Tractor_SOURCE_DIR}/include/tractor/HttpServer.h"
+                "${Tractor_SOURCE_DIR}/include/tractor/HttpResponse.h"
+
                 )
 
 
@@ -45,6 +52,10 @@ add_library(tractor_library Channel.cpp
                             ThreadPool.cpp
 
                             EPoller.cpp
+
+                            HttpParser.cpp
+                            HttpServer.cpp
+                            HttpResponse.cpp
                             ${HEADER_LIST})
 
 # We need this directory, and users of our library will need it too

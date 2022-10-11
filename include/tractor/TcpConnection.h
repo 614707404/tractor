@@ -5,9 +5,10 @@
 #include <tractor/SockAddr.h>
 #include <tractor/Buffer.h>
 
-#include <boost/scoped_ptr.hpp>
+#include <boost/any.hpp>
 #include <string>
 #include <functional>
+#include <memory>
 namespace tractor
 {
 
@@ -57,9 +58,19 @@ namespace tractor
         }
 
         void send(const std::string &message);
+        void send(Buffer *buf);
         void shutdown();
 
         void setTcpNoDelay(bool on);
+
+        void setContext(const boost::any &context)
+        {
+            context_ = context;
+        }
+        boost::any *getContext()
+        {
+            return &context_;
+        }
 
     private:
         enum ConnectState_
@@ -86,8 +97,8 @@ namespace tractor
         SockAddr localAddr_;
         SockAddr peerAddr_;
 
-        boost::scoped_ptr<Channel> channel_;
-        boost::scoped_ptr<Socket> socket_;
+        std::unique_ptr<Channel> channel_;
+        std::unique_ptr<Socket> socket_;
 
         ConnectionCallback connectionCallback_;
         MessageCallback messageCallback_;
@@ -100,6 +111,8 @@ namespace tractor
         Buffer outputBuffer_;
 
         size_t highWaterMark_;
+
+        boost::any context_;
     };
 }
 #endif

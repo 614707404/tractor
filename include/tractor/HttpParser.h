@@ -1,34 +1,40 @@
 #ifndef HTTPPARSER_H
 #define HTTPPARSER_H
 #include <tractor/HttpRequest.h>
+#include <tractor/Buffer.h>
 namespace tractor
 {
     class HttpParser
     {
     public:
-        enum CHECK_STATE
+        enum HttpRequestParseState
         {
-            CHECK_STATE_REQUESTLINE = 0,
-            CHECK_STATE_HEADER,
-            CHECK_STATE_CONTENT
+            kExpectRequestLine,
+            kExpectHeaders,
+            kExpectBody,
+            kGotAll,
         };
-        enum LINE_STATUS
+        HttpParser() : state_(kExpectRequestLine) {}
+        const HttpRequest &request() const
         {
-            LINE_OK = 0,
-            LINE_BAD,
-            LINE_OPEN
-        };
-        enum HTTP_CODE
+            return httpRequest_;
+        }
+        bool gotAll() const
         {
-            NO_REQUEST,
-            GET_REQUEST,
-            BAD_REQUEST,
-            FORBIDDEN_REQUEST,
-            INTERNAL_ERROR,
-            CLOSED_CONNECTION
-        };
+            return state_ == kGotAll;
+        }
+        void reset()
+        {
+            state_ = kExpectRequestLine;
+            HttpRequest dummy;
+            httpRequest_.swap(dummy);
+        }
+        bool parseRuquest(Buffer *, int64_t);
 
     private:
+        bool processRequestLine(const char *begin, const char *end);
+
+        HttpRequestParseState state_;
         HttpRequest httpRequest_;
     };
 }

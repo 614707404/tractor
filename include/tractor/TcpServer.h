@@ -20,6 +20,8 @@ namespace tractor
     class TcpServer : public noncopyable
     {
     public:
+        typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
+
         TcpServer(EventLoop *loop, SockAddr &listenAddr);
         ~TcpServer();
 
@@ -31,9 +33,10 @@ namespace tractor
         void setCloseCallback(const TcpConnection::CloseCallback &cb) { closeCallback_ = cb; }
         void setWriteCompleteCallback(const TcpConnection::WriteCompleteCallback &cb) { writeCompleteCallback_ = cb; }
 
+        EventLoop *getLoop() const { return loop_; }
+
     private:
         typedef std::map<std::string, std::shared_ptr<TcpConnection>> ConnectionMap;
-        typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
 
         void newConnection(int sockfd, const SockAddr &peerAddr);
         void removeConnection(const TcpConnectionPtr &conn);

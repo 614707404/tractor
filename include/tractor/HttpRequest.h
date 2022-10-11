@@ -103,6 +103,43 @@ namespace tractor
         {
             return receiveTime_;
         }
+        void addHeader(const char *start, const char *colon, const char *end)
+        {
+            std::string field(start, colon);
+            ++colon;
+            // 去空格
+            while (colon < end && isspace(*colon))
+            {
+                ++colon;
+            }
+            std::string value(colon, end);
+            // 去空格
+            while (!value.empty() && isspace(value[value.size() - 1]))
+            {
+                value.resize(value.size() - 1);
+            }
+            headers_[field] = value;
+        }
+
+        std::string getHeader(const std::string &field) const
+        {
+            std::string result;
+            std::map<std::string, std::string>::const_iterator it = headers_.find(field);
+            if (it != headers_.end())
+            {
+                result = it->second;
+            }
+            return result;
+        }
+        void swap(HttpRequest &that)
+        {
+            std::swap(method_, that.method_);
+            std::swap(version_, that.version_);
+            path_.swap(that.path_);
+            query_.swap(that.query_);
+            receiveTime_ = that.receiveTime_;
+            headers_.swap(that.headers_);
+        }
 
     private:
         Version version_;
@@ -110,7 +147,7 @@ namespace tractor
         std::string path_;
         std::string query_;
         int64_t receiveTime_;
-        std::map<std::string, std::string> header_;
+        std::map<std::string, std::string> headers_;
     };
 } // namespace tractor
 

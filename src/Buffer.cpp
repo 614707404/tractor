@@ -3,6 +3,7 @@
 #include <sys/uio.h>
 #include <memory.h>
 using namespace tractor;
+const char Buffer::kCRLF[] = "\r\n";
 ssize_t Buffer::readFd(int fd, int *savedErrno)
 {
     char extrabuf[65536];

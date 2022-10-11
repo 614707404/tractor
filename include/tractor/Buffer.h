@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <assert.h>
-
+#include <string.h>
 namespace tractor
 {
     class Buffer
@@ -129,6 +129,12 @@ namespace tractor
             std::copy(peek(), peek() + readableBytes(), buf.begin() + kCheapPrepend);
             buf.swap(buffer_);
         }
+
+        const char *findCRLF() const
+        {
+            const char *crlf = static_cast<const char *>(memmem(peek(), readableBytes(), kCRLF, 2));
+            return crlf == beginWrite() ? NULL : crlf;
+        }
         ssize_t readFd(int fd, int *savedErrno);
 
     private:
@@ -160,9 +166,13 @@ namespace tractor
                 assert(readable == readableBytes());
             }
         }
+
+    private:
         std::vector<char> buffer_;
         size_t readerIndex_;
         size_t writerIndex_;
+
+        static const char kCRLF[];
     };
 }
 #endif

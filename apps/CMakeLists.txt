@@ -10,8 +10,8 @@
 # add_executable(Acceptor_test Acceptor_test.cpp)
 # target_link_libraries(Acceptor_test PRIVATE tractor_library)
 
-add_executable(TcpServer_test TcpServer_test.cpp)
-target_link_libraries(TcpServer_test PRIVATE tractor_library)#spdlog::spdlog)
+# add_executable(TcpServer_test TcpServer_test.cpp)
+# target_link_libraries(TcpServer_test PRIVATE tractor_library)#spdlog::spdlog)
 
 # add_executable(TcpWrite_test TcpWrite_test.cpp)
 # target_link_libraries(TcpWrite_test PRIVATE tractor_library)

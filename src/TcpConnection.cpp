@@ -100,7 +100,7 @@ void TcpConnection::connectDestroyed()
     channel_->disableAll();
     connectionCallback_(shared_from_this());
 
-    loop_->removeChannel(get_pointer(channel_));
+    loop_->removeChannel(channel_.get());
 }
 void TcpConnection::handleWrite_()
 {
@@ -168,6 +168,26 @@ void TcpConnection::send(const std::string &message)
         else
         {
             loop_->runInLoop(std::bind(&TcpConnection::sendInLoop, this, message));
+        }
+    }
+}
+void TcpConnection::send(Buffer *buf)
+{
+    if (state_ == kConnected)
+    {
+        if (loop_->isInLoopThread())
+        {
+            sendInLoop(buf->peek(), buf->readableBytes());
+            buf->retrieveAll();
+        }
+        else
+        {
+            void (TcpConnection::*fp)(const StringPiece &message) = &TcpConnection::sendInLoop;
+            loop_->runInLoop(
+                std::bind(fp,
+                          this, // FIXME
+                          buf->retrieveAllAsString()));
+            // std::forward<string>(message)));
         }
     }
 }
