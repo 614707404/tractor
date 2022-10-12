@@ -88,6 +88,8 @@ namespace tractor
         void handleError_();
 
         void sendInLoop(const std::string &message);
+        // void sendInLoop(const void *data, size_t len);
+
         void shutdownInLoop();
 
         EventLoop *loop_;
