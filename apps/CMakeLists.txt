@@ -18,4 +18,5 @@
 
 # add_executable(chargen_test chargen_test.cpp)
 # target_link_libraries(chargen_test PRIVATE tractor_library Threads::Threads)
-
+add_executable(HttpServer_test HttpServer_test.cpp)
+target_link_libraries(HttpServer_test PRIVATE tractor_library)

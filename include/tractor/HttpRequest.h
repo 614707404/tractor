@@ -73,7 +73,31 @@ namespace tractor
         }
 
         Method getMethod() const { return method_; }
-
+        std::string getMethodString() const
+        {
+            const char *result = "UNKNOWN";
+            switch (method_)
+            {
+            case kGet:
+                result = "GET";
+                break;
+            case kPost:
+                result = "POST";
+                break;
+            case kHead:
+                result = "HEAD";
+                break;
+            case kPut:
+                result = "PUT";
+                break;
+            case kDelete:
+                result = "DELETE";
+                break;
+            default:
+                break;
+            }
+            return result;
+        }
         void setPath(const char *start, const char *end)
         {
             path_.assign(start, end);
@@ -131,6 +155,12 @@ namespace tractor
             }
             return result;
         }
+
+        const std::map<std::string, std::string> &headers() const
+        {
+            return headers_;
+        }
+
         void swap(HttpRequest &that)
         {
             std::swap(method_, that.method_);
