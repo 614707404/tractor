@@ -1,4 +1,8 @@
 #include <tractor/HttpResponse.h>
+
+#include <fstream>
+#include <sstream>
+using namespace std;
 using namespace tractor;
 
 void HttpResponse::appendToBuffer(Buffer *output) const
@@ -30,4 +34,22 @@ void HttpResponse::appendToBuffer(Buffer *output) const
 
     output->append("\r\n");
     output->append(body_);
+}
+void HttpResponse::setBodyByFile(const std::string &url)
+{
+    ifstream send_file;
+    send_file.open("/tractor/resources" + url + ".html");
+    if (!send_file.is_open())
+    {
+        statusCode_ = k404NotFound;
+        statusMessage_ = "Not Found";
+        closeConnection_ = true;
+    }
+    ostringstream ss;
+    char cc;
+    while (send_file.get(cc))
+    {
+        ss.put(cc);
+    }
+    body_ = ss.str();
 }

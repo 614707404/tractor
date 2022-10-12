@@ -30,7 +30,7 @@ void onRequest(const HttpRequest &req, HttpResponse *resp)
         resp->setStatusCode(HttpResponse::k200Ok);
         resp->setStatusMessage("OK");
         resp->setContentType("text/html");
-        resp->addHeader("Server", "Muduo");
+        resp->addHeader("Server", "tractor");
         resp->setBody("<html><head><title>This is title</title></head>"
                       "<body><h1>Hello</h1></body></html>");
     }
@@ -39,14 +39,16 @@ void onRequest(const HttpRequest &req, HttpResponse *resp)
         resp->setStatusCode(HttpResponse::k200Ok);
         resp->setStatusMessage("OK");
         resp->setContentType("text/plain");
-        resp->addHeader("Server", "Muduo");
+        resp->addHeader("Server", "tractor");
         resp->setBody("hello, world!\n");
     }
     else
     {
-        resp->setStatusCode(HttpResponse::k404NotFound);
-        resp->setStatusMessage("Not Found");
-        resp->setCloseConnection(true);
+        resp->setStatusCode(HttpResponse::k200Ok);
+        resp->setStatusMessage("OK");
+        resp->setContentType("text/html");
+        resp->addHeader("Server", "tractor");
+        resp->setBodyByFile(req.getPath());
     }
 }
 

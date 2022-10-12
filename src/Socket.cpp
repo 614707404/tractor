@@ -2,6 +2,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <iostream>
+#include "spdlog/spdlog.h"
 using namespace tractor;
 using namespace std;
 // Socket::Socket() : socketFd_(socket(PF_INET, SOCK_STREAM, 0)) {}
@@ -20,7 +21,7 @@ void Socket::Bind(tractor::SockAddr &ServerAddr)
                      reinterpret_cast<struct sockaddr *>(ServerAddr.getAddrPtr()),
                      sizeof ServerAddr);
     if (ret < 0)
-        std::cout << "bind error" << std::endl;
+        spdlog::error("bind error");
 }
 void Socket::Listen()
 {

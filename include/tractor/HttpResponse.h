@@ -53,7 +53,7 @@ namespace tractor
         {
             body_ = body;
         }
-
+        void setBodyByFile(const std::string &url);
         void appendToBuffer(Buffer *output) const;
 
     private:
