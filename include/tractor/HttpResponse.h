@@ -19,6 +19,7 @@ namespace tractor
         explicit HttpResponse(bool close)
             : statusCode_(kUnknown),
               closeConnection_(close) {}
+
         void setStatusCode(HttpStatusCode code)
         {
             statusCode_ = code;
