@@ -42,6 +42,16 @@ void onRequest(const HttpRequest &req, HttpResponse *resp)
         resp->addHeader("Server", "tractor");
         resp->setBody("hello, world!\n");
     }
+    else if (req.getPath() == "/login")
+    {
+        resp->setStatusCode(HttpResponse::k200Ok);
+        resp->setStatusMessage("OK");
+        resp->setContentType("text/html");
+        resp->addHeader("Server", "tractor");
+        resp->setBody("<html><head><title>you put a login request</title></head>"
+                      "<body><h1>Hello</h1></body></html>");
+        spdlog::info(req.getQuery());
+    }
     else
     {
         resp->setStatusCode(HttpResponse::k200Ok);
