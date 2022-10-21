@@ -1,10 +1,11 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
-// Channel 类简单封装文件描述符，方便 fd 的 IO 事件分发
 
 #include <functional>
+
 #include <tractor/noncopyable.h>
 #include <tractor/EventLoop.h>
+
 namespace tractor
 {
 
@@ -13,9 +14,12 @@ namespace tractor
     public:
         typedef std::function<void()> EventCallback;
         typedef std::function<void(int64_t)> ReadEventCallback;
+
         Channel(EventLoop *loop, int fd);
         ~Channel();
+
         void handleEvent(int64_t receiveTime);
+
         void setReadCallback(const ReadEventCallback &cb)
         {
             readCallback_ = cb;
@@ -33,10 +37,9 @@ namespace tractor
             closeCallback_ = cb;
         }
 
-        int fd() const { return fd_; }
-        int events() const { return events_; }
-        void set_revents(int revt) { revents_ = revt; }
-        bool isNoneEvent() const { return events_ == kNoneEvent; }
+        int getFd() const { return fd_; }
+        int getEvents() const { return events_; }
+        void setRevents(int revt) { revents_ = revt; }
 
         void enableReading()
         {
@@ -59,11 +62,12 @@ namespace tractor
             update();
         }
 
+        bool isNoneEvent() const { return events_ == kNoneEvent; }
         bool isWriting() const { return events_ & kWriteEvent; }
-        int index() { return index_; }
-        void set_index(int idx) { index_ = idx; }
+        int getIndex() { return index_; }
+        void setIndex(int idx) { index_ = idx; }
 
-        EventLoop *ownerLoop() { return loop_; }
+        EventLoop *getOwnerLoop() { return loop_; }
 
     private:
         void update();
