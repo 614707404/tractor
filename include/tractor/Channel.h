@@ -82,7 +82,7 @@ namespace tractor
         const int fd_;
         int events_;  // events_是它关心的IO事件， 由用户设置
         int revents_; // 目前活动的事件，由EventLoop/Poller设置
-        int index_;   // used by Poller.
+        int index_;   // 在poller中组织使用
 
         ReadEventCallback readCallback_;
         EventCallback writeCallback_;
