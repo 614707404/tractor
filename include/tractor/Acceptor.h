@@ -5,7 +5,6 @@
 #include <functional>
 #include <tractor/Channel.h>
 
-// 用于建立连接的类，封装了 bind() listen() accept() 等操作
 namespace tractor
 {
     class EventLoop;

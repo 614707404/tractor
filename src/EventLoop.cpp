@@ -81,14 +81,14 @@ void EventLoop::loop()
 
 void EventLoop::updateChannel(Channel *channel)
 {
-    assert(channel->ownerLoop() == this);
+    assert(channel->getOwnerLoop() == this);
     assertInLoopThread();
     poller_->updateChannel(channel);
 }
 
 void EventLoop::removeChannel(Channel *channel)
 {
-    assert(channel->ownerLoop() == this);
+    assert(channel->getOwnerLoop() == this);
     assertInLoopThread();
     poller_->removeChannel(channel);
 }

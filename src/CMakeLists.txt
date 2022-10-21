@@ -31,6 +31,8 @@ set(HEADER_LIST "${Tractor_SOURCE_DIR}/include/tractor/noncopyable.h"
                 "${Tractor_SOURCE_DIR}/include/tractor/HttpServer.h"
                 "${Tractor_SOURCE_DIR}/include/tractor/HttpResponse.h"
 
+                "${Tractor_SOURCE_DIR}/include/tractor/Timestamp.h"
+
                 )
 
 
@@ -56,6 +58,8 @@ add_library(tractor_library Channel.cpp
                             HttpParser.cpp
                             HttpServer.cpp
                             HttpResponse.cpp
+
+                            Timestamp.cpp
                             ${HEADER_LIST})
 
 # We need this directory, and users of our library will need it too

@@ -35,7 +35,7 @@ TcpConnection::TcpConnection(EventLoop *loop,
 TcpConnection::~TcpConnection()
 {
     cout << "TcpConnection::dtor[" << name_ << "] at " << this
-         << " fd=" << channel_->fd() << endl;
+         << " fd=" << channel_->getFd() << endl;
 }
 void TcpConnection::connectEstablished()
 {
@@ -50,7 +50,7 @@ void TcpConnection::connectEstablished()
 void TcpConnection::handleRead_(int64_t receiveTime)
 {
     int savedErrno = 0;
-    ssize_t n = inputBuffer_.readFd(channel_->fd(), &savedErrno);
+    ssize_t n = inputBuffer_.readFd(channel_->getFd(), &savedErrno);
 
     if (n > 0)
     {
@@ -85,7 +85,7 @@ void TcpConnection::handleError_()
 
     socklen_t errlen = sizeof err;
 
-    if (::getsockopt(channel_->fd(), SOL_SOCKET, SO_ERROR, &err, &errlen) < 0)
+    if (::getsockopt(channel_->getFd(), SOL_SOCKET, SO_ERROR, &err, &errlen) < 0)
     {
         err = errno;
     }
@@ -109,7 +109,7 @@ void TcpConnection::handleWrite_()
     loop_->assertInLoopThread();
     if (channel_->isWriting())
     {
-        ssize_t n = ::write(channel_->fd(),
+        ssize_t n = ::write(channel_->getFd(),
                             outputBuffer_.peek(),
                             outputBuffer_.readableBytes());
         if (n > 0)
@@ -200,7 +200,7 @@ void TcpConnection::sendInLoop(const std::string &message)
     // if no thing in output queue, try writing directly
     if (!channel_->isWriting() && outputBuffer_.readableBytes() == 0)
     {
-        nwrote = ::write(channel_->fd(), message.data(), message.size());
+        nwrote = ::write(channel_->getFd(), message.data(), message.size());
         if (nwrote >= 0)
         {
             if (static_cast<size_t>(nwrote) < message.size())
